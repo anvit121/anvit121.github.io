@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CTF Writeup: RSA Cloud Village CTF 2025 | Anvit</title>
+  <title>CTF Writeup: RSA Cloud Village CTF 2025</title>
+  <link rel="icon" href="img/logo.jpg" type="image/jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
@@ -156,7 +157,7 @@ unzip -l protected_folder.zip</pre>
       <p>The ZIP was password-protected. I tried the obvious passwords from the dump — none worked. I moved to a dictionary attack using <code>fcrackzip</code> with <code>rockyou.txt</code>:</p>
       <pre>fcrackzip -u -D -p /usr/share/wordlists/rockyou.txt protected_folder.zip</pre>
       <p>The password was cracked quickly. After extraction, <code>file3.txt</code> contained the flag.</p>
-      <div class="callout flag"><p>🚩 Flag found in file3.txt inside the cracked ZIP</p></div>
+      <div class="callout flag"><p>Flag found in file3.txt inside the cracked ZIP</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> SQL injection on login forms is still a high-impact vulnerability. Never expose storage URLs as credentials, and use strong passwords on archives — especially ones containing sensitive data.</p></div>
     </div>
   </div>
@@ -197,7 +198,7 @@ tar -xf google-cloud-sdk-460.0.0-linux-x86_64.tar.gz
       <pre>./google-cloud-sdk/bin/gsutil ls gs://pixelgen-bucket/
 # → gs://pixelgen-bucket/flag.txt
 ./google-cloud-sdk/bin/gsutil cp gs://pixelgen-bucket/flag.txt .</pre>
-      <div class="callout flag"><p>🚩 Flag retrieved from gs://pixelgen-bucket/flag.txt</p></div>
+      <div class="callout flag"><p>Flag retrieved from gs://pixelgen-bucket/flag.txt</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> Deleting a file in a commit does not remove it from git history. Use <code>git filter-repo</code> or BFG Repo Cleaner to scrub secrets. Pre-commit hooks like <code>git-secrets</code> or truffleHog can catch this before it ever hits a remote.</p></div>
     </div>
   </div>
@@ -230,7 +231,7 @@ aws s3 ls s3://cheat-kqlog/ --no-sign-request
 # → flag.txt</pre>
       <p>Anonymous access worked with <code>--no-sign-request</code>. I downloaded the flag:</p>
       <pre>aws s3 cp s3://cheat-kqlog/flag.txt . --no-sign-request</pre>
-      <div class="callout flag"><p>🚩 Flag retrieved from s3://cheat-kqlog/flag.txt</p></div>
+      <div class="callout flag"><p>Flag retrieved from s3://cheat-kqlog/flag.txt</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> Threat actors can hide data in unexpected log fields to evade automated parsers. Always validate that fields conform to expected types and lengths — a timestamp field containing 500+ characters is a dead giveaway.</p></div>
     </div>
   </div>
@@ -267,7 +268,7 @@ aws s3 ls s3://phantom-s3-heist-20250426231616516300000002/ --no-sign-request
 # Default region: us-west-1</pre>
       <p>With valid credentials, I copied the flag directly:</p>
       <pre>aws s3 cp s3://phantom-s3-heist-20250426231616516300000002/flag.txt ./flag.txt</pre>
-      <div class="callout flag"><p>🚩 Flag retrieved from s3://phantom-s3-heist-.../flag.txt</p></div>
+      <div class="callout flag"><p>Flag retrieved from s3://phantom-s3-heist-.../flag.txt</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> ELK stacks with public access and no field-level redaction are a goldmine for attackers. AWS credentials should never appear in application logs. Use IAM roles instead of long-lived access keys, and audit your log pipelines for credential leakage regularly.</p></div>
     </div>
   </div>
@@ -275,7 +276,7 @@ aws s3 ls s3://phantom-s3-heist-20250426231616516300000002/ --no-sign-request
 </main></div>
 
 <footer><div class="footer-inner">
-  <p class="footer-copy">© 2025 Anvit Mirjurkar</p>
+  <p class="footer-copy">© 2026 Anvit Mirjurkar</p>
 </div></footer>
 
 <script>

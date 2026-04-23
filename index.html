@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Anvit's Portfolio</title>
+  <link rel="icon" href="img/logo.jpg" type="image/jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
@@ -57,33 +58,27 @@
 
     a { color: inherit; text-decoration: none; }
 
-    /* ── NAV ── */
+    /*  NAV  */
     header {
       position: sticky; top: 0; z-index: 50;
       background: var(--nav-bg);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      transition: background 0.3s ease, border-color 0.3s ease;
+      transition: background 0.3s, border-color 0.3s;
     }
     .nav-inner {
-      max-width: 896px; margin: 0 auto;
-      padding: 16px 24px;
+      max-width: 896px; margin: 0 auto; padding: 16px 24px;
       display: flex; align-items: center; justify-content: space-between;
     }
     .nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
-    .nav-links a {
-      font-size: 14px; color: var(--muted);
-      transition: color 0.15s; font-weight: 400;
-    }
-    .nav-links a:hover, .nav-links a.active { color: var(--text); font-weight: 600; }
+    .nav-links a { font-size: 14px; color: var(--faint); transition: color 0.15s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); font-weight: 500; }
     .nav-logo { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--text); }
-
     .theme-toggle {
       width: 32px; height: 32px; border-radius: 8px;
       background: var(--card); border: 1px solid var(--border);
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s, border-color 0.3s; flex-shrink: 0; color: var(--muted); 
+      transition: background 0.2s; color: var(--faint);
     }
     .theme-toggle:hover { background: var(--secondary); color: var(--text); }
     .theme-toggle svg { width: 15px; height: 15px; }
@@ -92,12 +87,12 @@
     [data-theme="light"] .icon-sun { display: block; }
     [data-theme="light"] .icon-moon { display: none; }
 
-    /* ── PAGE ── */
+    /*  PAGE  */
     .page { max-width: 896px; margin: 0 auto; padding: 0 24px; }
     main { padding-bottom: 80px; }
     article { margin-top: 40px; display: flex; flex-direction: column; gap: 64px; }
 
-    /* ── HERO (Anvit's original layout preserved) ── */
+    /*  HERO  */
     .hero { display: flex; flex-direction: column; gap: 20px; }
     .hero-top { display: flex; align-items: center; gap: 20px; }
     .hero-avatar {
@@ -124,7 +119,7 @@
       max-width: 600px; padding-left: 100px;
     }
 
-    /* ── SECTION TITLES ── */
+    /*  SECTION TITLES  */
     .section-header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 16px;
@@ -140,7 +135,7 @@
     }
     .view-more:hover { color: var(--text); }
 
-    /* ── TABS ── */
+    /*  TABS  */
     .tabs-list {
       display: grid; grid-template-columns: 1fr 1fr;
       background: var(--card); border: 1px solid var(--border);
@@ -165,7 +160,7 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── TIMELINE CARD ── */
+    /*  TIMELINE CARD  */
     .tl-card {
       border: 1px solid var(--border); border-radius: 10px;
       background: var(--card); overflow: hidden;
@@ -205,7 +200,7 @@
     }
     .tl-bullets li { font-size: 12px; color: var(--text); line-height: 1.6; }
 
-    /* ── PROJECTS GRID ── */
+    /*  PROJECTS GRID  */
     .projects-grid {
       display: grid; grid-template-columns: 1fr; gap: 14px;
     }
@@ -241,7 +236,7 @@
     .badge-link:hover { opacity: 0.75; }
     .badge-link svg { width: 11px; height: 11px; }
 
-    /* ── POSTS ── */
+    /*  POSTS  */
     .posts-card {
       border: 1px solid var(--border); border-radius: 10px;
       background: var(--card); overflow: hidden;
@@ -276,7 +271,7 @@
       color: var(--faint); white-space: nowrap; padding-top: 2px;
     }
 
-    /* ── FOOTER ── */
+    /*  FOOTER  */
     footer {
       padding: 32px 0 60px; border-top: 1px solid var(--border);
       transition: border-color 0.3s;

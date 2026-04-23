@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CTF Writeup: TryHackMe Hackfinity Battle | Anvit</title>
+  <title>CTF Writeup: TryHackMe Hackfinity Battle</title>
+  <link rel="icon" href="img/logo.jpg" type="image/jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
@@ -179,7 +180,7 @@ index.html                 (2300 bytes)</pre>
       <pre>aws s3 cp s3://darkinjector-phish/captured-logins-093582390 .
 cat captured-logins-093582390</pre>
       <p>The file contained victim credentials and the flag in a single line.</p>
-      <div class="callout flag"><p>🚩 THM{this_is_not_what_i_meant_by_public}</p></div>
+      <div class="callout flag"><p>THM{this_is_not_what_i_meant_by_public}</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> Always enable S3 Block Public Access at the account level. A publicly readable bucket containing a phishing credential dump is a double failure — misconfigured infra and exposed victim data.</p></div>
     </div>
   </div>
@@ -211,7 +212,7 @@ aws iam list-roles</pre>
       <p>Only <code>secretsmanager list-secrets</code> succeeded, revealing a secret named <code>secret-flag</code>. Classic enumeration: try as many read-only calls as possible and note which ones succeed. With the secret name known, I extracted it:</p>
       <pre>aws secretsmanager get-secret-value --secret-id secret-flag</pre>
       <p>The output JSON's <code>SecretString</code> field contained the flag.</p>
-      <div class="callout flag"><p>🚩 THM{for_your_eyes_only}</p></div>
+      <div class="callout flag"><p>THM{for_your_eyes_only}</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> Least-privilege IAM policies matter. A user that can enumerate Secrets Manager but has no business need to is a misconfiguration waiting to become a breach. Tools like Prowler and Steampipe can surface these over-permissive configs at scale.</p></div>
     </div>
   </div>
@@ -255,7 +256,7 @@ export AWS_SESSION_TOKEN=...</pre>
   --output text \
   --query Plaintext | base64 --decode > dec_message.txt</pre>
       <p>The decrypted plaintext contained the flag.</p>
-      <div class="callout flag"><p>🚩 THM{crypto_cloud_conundrum}</p></div>
+      <div class="callout flag"><p>THM{crypto_cloud_conundrum}</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> <code>sts:AssumeRole</code> without a proper trust boundary condition is a classic privilege escalation path. Always scope role trust policies to specific principals and add conditions like MFA or source IP. Also — never store KMS-encrypted blobs alongside the role ARN that can decrypt them.</p></div>
     </div>
   </div>
@@ -277,7 +278,7 @@ export AWS_SESSION_TOKEN=...</pre>
     </div>
     <div class="content">
       <p>The challenge provided an image. I uploaded it to Google Images for a reverse image search and found the mural it depicted along with its location.</p>
-      <div class="callout flag"><p>🚩 THM{coringa_do_beco}</p></div>
+      <div class="callout flag"><p>THM{coringa_do_beco}</p></div>
     </div>
   </div>
 
@@ -296,7 +297,7 @@ export AWS_SESSION_TOKEN=...</pre>
       <p>The challenge provided an image containing unusual symbols. I uploaded it to Google Images and identified the symbols as <strong>Pigpen cipher</strong> — a geometric substitution cipher that maps letters to grid positions.</p>
       <p>After decoding the symbols using a Pigpen cipher key, the plaintext read:</p>
       <pre>meet at torii portal</pre>
-      <div class="callout flag"><p>🚩 THM{torii_portal}</p></div>
+      <div class="callout flag"><p>THM{torii_portal}</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> When you encounter unfamiliar symbols in a CTF, a reverse image search of a snippet is often faster than trying to identify the cipher manually. Google Images recognized the Pigpen pattern immediately.</p></div>
     </div>
   </div>
@@ -319,7 +320,7 @@ export AWS_SESSION_TOKEN=...</pre>
       <p>This surfaced a TripAdvisor listing at the URL:</p>
       <pre>https://www.tripadvisor.ie/Restaurant_Review-g303631-d14802491-Reviews-Mr_Wok-Sao_Paulo_State_of_Sao_Paulo.html</pre>
       <p>The listing showed the address: <strong>Rua Galvao Bueno 83, Sao Paulo</strong>. I submitted the street number as the flag format and it was accepted.</p>
-      <div class="callout flag"><p>🚩 THM{83_galvao_bueno}</p></div>
+      <div class="callout flag"><p>THM{83_galvao_bueno}</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> In multi-part OSINT challenges, the clues are often geographically or thematically linked. When a direct search fails, add context from previous challenges — here the São Paulo connection from challenges 1 and 2 was the key.</p></div>
     </div>
   </div>
@@ -348,7 +349,7 @@ export AWS_SESSION_TOKEN=...</pre>
       <p>That didn't work — the <code>&&</code> operator was likely being filtered or the preceding command was failing. I switched back to the semicolon:</p>
       <pre>; cat flag.txt</pre>
       <p>This worked and printed the flag directly.</p>
-      <div class="callout flag"><p>🚩 THM{pgp_cant_stop_me}</p></div>
+      <div class="callout flag"><p>THM{pgp_cant_stop_me}</p></div>
       <div class="callout tip"><p><strong>Takeaway:</strong> When <code>&&</code> is blocked or fails, <code>;</code> is often a viable alternative since it runs the second command regardless of the first command's exit code. Always test multiple injection delimiters — <code>;</code>, <code>|</code>, <code>&&</code>, <code>||</code>, newlines — as filters are rarely complete.</p></div>
     </div>
   </div>
@@ -356,7 +357,7 @@ export AWS_SESSION_TOKEN=...</pre>
 </main></div>
 
 <footer><div class="footer-inner">
-  <p class="footer-copy">© 2025 Anvit Mirjurkar</p>
+  <p class="footer-copy">© 2026 Anvit Mirjurkar</p>
 </div></footer>
 
 <script>
