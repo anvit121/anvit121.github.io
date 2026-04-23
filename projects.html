@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anvit's Projects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    :root, [data-theme="light"] {
+      --bg: #ffffff; --card: #EDECEA; --border: #D6D4CE;
+      --text: #000000; --muted: #3A3835; --faint: #9E9C98;
+      --primary: #1E1E1C; --primary-fg: #F5F4F0;
+      --secondary: #E2E0DB; --sec-fg: #3A3835;
+      --nav-bg: rgba(245,244,240,0.88);
+      --chip-bg: #F5F4F0; --chip-border: #D6D4CE; --chip-text: #3A3835;
+    }
+    [data-theme="dark"] {
+      --bg: #000000; --card: rgb(7,9,11); --border: #30363d;
+      --text: #ffffff; --muted: #c9d1d9; --faint: #484f58;
+      --primary: #e6edf3; --primary-fg: #0d1117;
+      --secondary: #21262d; --sec-fg: #c9d1d9;
+      --nav-bg: rgba(0,0,0,0.88);
+      --chip-bg: #161b22; --chip-border: #30363d; --chip-text: #8b949e;
+    }
+ 
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 15px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased; min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    a { color: inherit; text-decoration: none; }
+ 
+    /* ── Nav ── */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .nav-inner {
+      max-width: 896px; margin: 0 auto; padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+    .nav-links a { font-size: 14px; color: var(--faint); transition: color 0.15s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); font-weight: 500; }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--text); }
+    .theme-toggle {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s; color: var(--faint);
+    }
+    .theme-toggle:hover { background: var(--secondary); color: var(--text); }
+    .theme-toggle svg { width: 15px; height: 15px; }
+    .icon-sun { display: none; }
+    .icon-moon { display: block; }
+    [data-theme="light"] .icon-sun { display: block; }
+    [data-theme="light"] .icon-moon { display: none; }
+ 
+    /* ── Layout ── */
+    .page { max-width: 896px; margin: 0 auto; padding: 0 24px; }
+    main { padding-bottom: 80px; }
+ 
+    .page-header { padding: 40px 0 32px; }
+    .page-header h1 {
+      font-size: clamp(24px, 5vw, 36px); font-weight: 600;
+      letter-spacing: -0.03em; color: var(--text); margin-bottom: 8px;
+    }
+    .page-header p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 520px; }
+ 
+    /* ── Grid ── */
+    .projects-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 560px) { .projects-grid { grid-template-columns: 1fr 1fr; } }
+ 
+    /* ── Card ── */
+    .project-card {
+      border: 1px solid var(--border); border-radius: 12px;
+      background: var(--card); overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color 0.2s, transform 0.15s, background 0.3s;
+    }
+    .project-card:hover { border-color: var(--faint); transform: translateY(-2px); }
+ 
+    /* ── Stack preview ── */
+    .project-preview {
+      height: 156px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .stack-chip {
+      background: var(--chip-bg);
+      border: 1px solid var(--chip-border);
+      border-radius: 6px;
+      padding: 7px 6px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: border-color 0.15s;
+    }
+    .project-card:hover .stack-chip { border-color: var(--faint); }
+    .chip-icon {
+      font-size: 15px;
+      line-height: 1;
+    }
+    .chip-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: var(--chip-text);
+      letter-spacing: 0.02em;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+ 
+    /* ── Card body ── */
+    .project-body { padding: 18px 18px 8px; flex: 1; display: flex; flex-direction: column; gap: 7px; }
+    .project-name { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+    .project-desc { font-size: 12px; color: var(--muted); line-height: 1.65; }
+ 
+    .project-footer { padding: 8px 18px 18px; display: flex; flex-direction: column; gap: 10px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag {
+      background: var(--secondary); color: var(--sec-fg);
+      border-radius: 4px; padding: 2px 7px;
+      font-size: 10px; font-weight: 600;
+      font-family: 'DM Mono', monospace;
+      transition: background 0.3s, color 0.3s;
+    }
+ 
+    .proj-links { display: flex; flex-wrap: wrap; gap: 6px; }
+    .badge-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--primary); color: var(--primary-fg);
+      border-radius: 5px; padding: 4px 10px;
+      font-size: 11px; font-weight: 600;
+      transition: opacity 0.15s;
+    }
+    .badge-link:hover { opacity: 0.75; }
+    .badge-link svg { width: 11px; height: 11px; }
+    .badge-link-outline {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: none; color: var(--faint); border: 1px solid var(--border);
+      border-radius: 5px; padding: 3px 10px;
+      font-size: 11px; font-weight: 500;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .badge-link-outline:hover { color: var(--text); border-color: var(--faint); }
+    .badge-link-outline svg { width: 11px; height: 11px; }
+ 
+    /* ── Footer ── */
+    footer {
+      padding: 32px 0 60px; border-top: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .footer-inner {
+      max-width: 896px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy { font-size: 12px; color: var(--faint); }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a { color: var(--faint); transition: color 0.15s; }
+    .footer-social a:hover { color: var(--text); }
+    .footer-social svg { width: 18px; height: 18px; }
+ 
+    @media (max-width: 480px) {
+      .page, .nav-inner { padding-left: 16px; padding-right: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="blogs.html">Blogs</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </button>
+  </div>
+</header>
+
+<div class="page">
+<main>
+
+  <div class="page-header">
+    <h1>Projects</h1>
+    <p>A collection of tools, research, and side-projects I have built across security, automation and fullstack development.</p>
+  </div>
+
+  <div class="projects-grid">
+ 
+    <!-- 1: AutoFix -->
+    <div class="project-card">
+      <div class="project-preview">
+        <div class="stack-grid">
+          <div class="stack-chip"><div class="chip-icon">🐍</div><div class="chip-label">Python</div></div>
+          <div class="stack-chip"><div class="chip-icon">⚡</div><div class="chip-label">FastAPI</div></div>
+          <div class="stack-chip"><div class="chip-icon">🦙</div><div class="chip-label">Llama 3.3</div></div>
+          <div class="stack-chip"><div class="chip-icon">🔍</div><div class="chip-label">OWASP ZAP</div></div>
+          <div class="stack-chip"><div class="chip-icon">🐙</div><div class="chip-label">GitHub API</div></div>
+          <div class="stack-chip"><div class="chip-icon">📊</div><div class="chip-label">SonarQube</div></div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-name">AutoFix – AI-Powered AppSec Automation</div>
+        <p class="project-desc">AI-powered AppSec tool that ingests SAST/DAST results, deduplicates findings, and auto-generates secure code fixes with LLMs, opening GitHub PRs automatically.</p>
+      </div>
+      <div class="project-footer">
+        <div class="proj-links">
+          <a href="https://github.com/anvit121/autofix-appsec-ai" class="badge-link-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            Source
+          </a>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 2: CloudGuard -->
+    <div class="project-card">
+      <div class="project-preview">
+        <div class="stack-grid">
+          <div class="stack-chip"><div class="chip-icon">☁️</div><div class="chip-label">CloudTrail</div></div>
+          <div class="stack-chip"><div class="chip-icon">λ</div><div class="chip-label">Lambda</div></div>
+          <div class="stack-chip"><div class="chip-icon">🗄️</div><div class="chip-label">DynamoDB</div></div>
+          <div class="stack-chip"><div class="chip-icon">📨</div><div class="chip-label">SNS / SQS</div></div>
+          <div class="stack-chip"><div class="chip-icon">🏗️</div><div class="chip-label">CloudFormation</div></div>
+          <div class="stack-chip"><div class="chip-icon">⚙️</div><div class="chip-label">GitHub Actions</div></div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-name">CloudGuard – AWS Threat Detection Pipeline</div>
+        <p class="project-desc">Serverless AWS detection pipeline to identify privilege escalation, credential abuse, and data exfiltration using CloudTrail logs mapped to MITRE ATT&CK.</p>
+      </div>
+      <div class="project-footer">
+        <div class="proj-links">
+          <a href="https://github.com/anvit121/cloud-threat-detection-pipeline" class="badge-link-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+            Source
+          </a>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 3: HIPAA -->
+    <div class="project-card">
+      <div class="project-preview">
+        <div class="stack-grid">
+          <div class="stack-chip"><div class="chip-icon">☁️</div><div class="chip-label">AWS</div></div>
+          <div class="stack-chip"><div class="chip-icon">🔐</div><div class="chip-label">IAM</div></div>
+          <div class="stack-chip"><div class="chip-icon">🪣</div><div class="chip-label">S3</div></div>
+          <div class="stack-chip"><div class="chip-icon">🔭</div><div class="chip-label">CloudTrail</div></div>
+          <div class="stack-chip"><div class="chip-icon">🦅</div><div class="chip-label">Prowler</div></div>
+          <div class="stack-chip"><div class="chip-icon">🔒</div><div class="chip-label">Encryption</div></div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-name">AWS Infrastructure Hardening (HIPAA)</div>
+        <p class="project-desc">Reviewed an AWS setup for HIPAA compliance, focusing on IAM roles, S3 permissions, and encryption. Used Prowler to surface gaps and brought down overall risk.</p>
+      </div>
+      <div class="project-footer">
+        <div class="proj-links">
+          <a href="https://drive.google.com/drive/folders/1NnPUTa_cDIvKYeH0zBEfF0b1Avzj7yy6" class="badge-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            Report
+          </a>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 4: ZeroTrust AI -->
+    <div class="project-card">
+      <div class="project-preview">
+        <div class="stack-grid">
+          <div class="stack-chip"><div class="chip-icon">🐍</div><div class="chip-label">Python</div></div>
+          <div class="stack-chip"><div class="chip-icon">🏋️</div><div class="chip-label">OpenAI Gym</div></div>
+          <div class="stack-chip"><div class="chip-icon">☁️</div><div class="chip-label">CloudTrail</div></div>
+          <div class="stack-chip"><div class="chip-icon">🤖</div><div class="chip-label">RL Agent</div></div>
+          <div class="stack-chip"><div class="chip-icon">📈</div><div class="chip-label">Feature Eng.</div></div>
+          <div class="stack-chip"><div class="chip-icon">🔑</div><div class="chip-label">Access Ctrl</div></div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-name">ZeroTrust AI – Adaptive Access Control</div>
+        <p class="project-desc">Experimented with reinforcement learning for access control decisions. Trained models on CloudTrail data to distinguish normal vs risky behaviour and reduce false positives.</p>
+      </div>
+      <div class="project-footer">
+        <div class="proj-links">
+          <a href="https://drive.google.com/drive/folders/17WL30T38y_Wv159Aqp11uitUepVvD_6K?usp=sharing" class="badge-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            Report
+          </a>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 5: MobileTrace -->
+    <div class="project-card">
+      <div class="project-preview">
+        <div class="stack-grid">
+          <div class="stack-chip"><div class="chip-icon">🔬</div><div class="chip-label">Autopsy</div></div>
+          <div class="stack-chip"><div class="chip-icon">💾</div><div class="chip-label">FTK Imager</div></div>
+          <div class="stack-chip"><div class="chip-icon">📱</div><div class="chip-label">Cellebrite</div></div>
+          <div class="stack-chip"><div class="chip-icon">🧠</div><div class="chip-label">Volatility</div></div>
+          <div class="stack-chip"><div class="chip-icon">🗂️</div><div class="chip-label">Artefacts</div></div>
+          <div class="stack-chip"><div class="chip-icon">📝</div><div class="chip-label">Timeline</div></div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-name">MobileTrace – Android Forensics Analysis</div>
+        <p class="project-desc">Analyzed an Android device to recover deleted data and trace suspicious activity. Rebuilt timelines from logs and artefacts to understand how the compromise happened.</p>
+      </div>
+      <div class="project-footer">
+        <div class="proj-links">
+          <a href="https://drive.google.com/file/d/1vcp-b1EldXI5sUUCD2dC5YWaF2TdMgXF/view?usp=sharing" class="badge-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            Report
+          </a>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 6: OJUS -->
+    <div class="project-card">
+      <div class="project-preview">
+        <div class="stack-grid">
+          <div class="stack-chip"><div class="chip-icon">🌐</div><div class="chip-label">HTML/CSS</div></div>
+          <div class="stack-chip"><div class="chip-icon">✨</div><div class="chip-label">JavaScript</div></div>
+          <div class="stack-chip"><div class="chip-icon">🐘</div><div class="chip-label">PHP</div></div>
+          <div class="stack-chip"><div class="chip-icon">🗃️</div><div class="chip-label">MySQL</div></div>
+          <div class="stack-chip"><div class="chip-icon">💎</div><div class="chip-label">jQuery</div></div>
+          <div class="stack-chip"><div class="chip-icon">🔄</div><div class="chip-label">AJAX</div></div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-name">OJUS – Event Registration Platform</div>
+        <p class="project-desc">Website for managing sports and cultural events with real-time sign-ups. Focused on reliability and smooth performance under high concurrent load.</p>
+      </div>
+      <div class="project-footer">
+        <div class="proj-links">
+          <a href="https://ojus.apsit.edu.in/" class="badge-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            Website
+          </a>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 7: Doctor's App -->
+    <div class="project-card">
+      <div class="project-preview">
+        <div class="stack-grid">
+          <div class="stack-chip"><div class="chip-icon">⚛️</div><div class="chip-label">React</div></div>
+          <div class="stack-chip"><div class="chip-icon">🟢</div><div class="chip-label">Node.js</div></div>
+          <div class="stack-chip"><div class="chip-icon">🐳</div><div class="chip-label">Docker</div></div>
+          <div class="stack-chip"><div class="chip-icon">☸️</div><div class="chip-label">Kubernetes</div></div>
+          <div class="stack-chip"><div class="chip-icon">📦</div><div class="chip-label">AWS ECR</div></div>
+          <div class="stack-chip"><div class="chip-icon">⚙️</div><div class="chip-label">GitHub Actions</div></div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-name">Containerized Doctor's Appointment Platform</div>
+        <p class="project-desc">Full-stack appointment booking app deployed on AWS with Docker and Kubernetes. CI/CD via GitHub Actions with autoscaling and CloudWatch logging.</p>
+      </div>
+      <div class="project-footer">
+        <div class="proj-links">
+          <a href="https://drive.google.com/drive/folders/1BmYcgygESm-63bStJIaJOHUUWubDvHpO" class="badge-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            Report
+          </a>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- 8: Enterprise Pentest -->
+    <div class="project-card">
+      <div class="project-preview">
+        <div class="stack-grid">
+          <div class="stack-chip"><div class="chip-icon">💥</div><div class="chip-label">Metasploit</div></div>
+          <div class="stack-chip"><div class="chip-icon">🩸</div><div class="chip-label">BloodHound</div></div>
+          <div class="stack-chip"><div class="chip-icon">🐱</div><div class="chip-label">Mimikatz</div></div>
+          <div class="stack-chip"><div class="chip-icon">🗺️</div><div class="chip-label">CrackMapExec</div></div>
+          <div class="stack-chip"><div class="chip-icon">🔑</div><div class="chip-label">Kerbrute</div></div>
+          <div class="stack-chip"><div class="chip-icon">🔨</div><div class="chip-label">John / Hydra</div></div>
+        </div>
+      </div>
+      <div class="project-body">
+        <div class="project-name">Enterprise Penetration Test</div>
+        <p class="project-desc">Full black-box pentest on an enterprise environment. Found critical SMB misconfigurations, chained exploits to move laterally, and gained domain admin access.</p>
+      </div>
+      <div class="project-footer">
+        <div class="proj-links">
+          <a href="https://drive.google.com/file/d/1_ibh5geZiKpQSAycPh1UlHsTolQ1HiBG/view?usp=sharing" class="badge-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+            Report
+          </a>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+
+</main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p class="footer-copy">© 2026 Anvit Mirjurkar</p>
+    <div class="footer-social">
+      <a href="https://github.com/anvit121" target="_blank" rel="noopener" title="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/anvit-mirjurkar/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    const html = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('anvit-theme') || 'dark';
+    html.setAttribute('data-theme', saved);
+    btn.addEventListener('click', function() {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('anvit-theme', next);
+    });
+  })();
+</script>
+
+</body>
+</html>

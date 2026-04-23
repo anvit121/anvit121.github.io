@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anvit's Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root, [data-theme="light"] {
+      --bg:        #ffffff;
+      --card:      #EDECEA;
+      --border:    #D6D4CE;
+      --text:      #000000;
+      --muted:     #000000;
+      --faint:     #9E9C98;
+      --primary:   #1E1E1C;
+      --primary-fg:#F5F4F0;
+      --secondary: #E2E0DB;
+      --sec-fg:    #3A3835;
+      --nav-bg:    rgba(245,244,240,0.85);
+      --hover-bg:  rgba(0,0,0,0.03);
+      --shadow:    rgba(0,0,0,0.08);
+    }
+
+    [data-theme="dark"] {
+      --bg:        #000000;
+      --card:      rgb(7, 9, 11);
+      --border:    #30363d;
+      --text:      #ffffff;
+      --muted:     #ffffff;
+      --faint:     #484f58;
+      --primary:   #e6edf3;
+      --primary-fg:#0d1117;
+      --secondary: #21262d;
+      --sec-fg:    #c9d1d9;
+      --nav-bg:    rgba(0, 0, 0, 0.88);
+      --hover-bg:  rgba(255,255,255,0.04);
+      --shadow:    rgba(0,0,0,0.3);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .nav-inner {
+      max-width: 896px; margin: 0 auto;
+      padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-links { display: flex; gap: 24px; list-style: none; align-items: center; }
+    .nav-links a {
+      font-size: 14px; color: var(--muted);
+      transition: color 0.15s; font-weight: 400;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); font-weight: 600; }
+    .nav-logo { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--text); }
+
+    .theme-toggle {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.3s; flex-shrink: 0; color: var(--muted); 
+    }
+    .theme-toggle:hover { background: var(--secondary); color: var(--text); }
+    .theme-toggle svg { width: 15px; height: 15px; }
+    .icon-sun { display: none; }
+    .icon-moon { display: block; }
+    [data-theme="light"] .icon-sun { display: block; }
+    [data-theme="light"] .icon-moon { display: none; }
+
+    /* ── PAGE ── */
+    .page { max-width: 896px; margin: 0 auto; padding: 0 24px; }
+    main { padding-bottom: 80px; }
+    article { margin-top: 40px; display: flex; flex-direction: column; gap: 64px; }
+
+    /* ── HERO (Anvit's original layout preserved) ── */
+    .hero { display: flex; flex-direction: column; gap: 20px; }
+    .hero-top { display: flex; align-items: center; gap: 20px; }
+    .hero-avatar {
+      width: 200px; height: 200px; border-radius: 50%;
+      object-fit: cover; border: 2px solid var(--border);
+      flex-shrink: 0; transition: border-color 0.3s;
+    }
+    .hero-name-row { flex: 1; }
+    .hero-name {
+      font-size: clamp(20px, 4vw, 26px); font-weight: 600;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+    .hero-tagline { font-size: 13px; color: var(--muted); margin-top: 2px; font-family: 'DM Mono', monospace; }
+    .hero-social { display: flex; gap: 14px; margin-left: auto; }
+    .hero-social a {
+      color: var(--muted); transition: color 0.15s;
+      display: flex; align-items: center;
+    }
+    .hero-social a:hover { color: var(--text); }
+    .hero-social svg { width: 22px; height: 22px; }
+
+    .hero-bio {
+      font-size: 14px; line-height: 1.75; color: var(--muted);
+      max-width: 600px; padding-left: 100px;
+    }
+
+    /* ── SECTION TITLES ── */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: 18px; font-weight: 600;
+      letter-spacing: -0.02em; color: var(--text);
+    }
+    .view-more {
+      font-size: 13px; color: var(--muted);
+      display: flex; align-items: center; gap: 4px;
+      transition: color 0.15s;
+    }
+    .view-more:hover { color: var(--text); }
+
+    /* ── TABS ── */
+    .tabs-list {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 3px; margin-bottom: 12px;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .tab-btn {
+      background: none; border: none; border-radius: 6px;
+      padding: 7px 16px; font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      cursor: pointer; transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    }
+    .tab-btn.active {
+      background: var(--bg); color: var(--text);
+      box-shadow: 0 1px 4px var(--shadow);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; animation: fadeSlideIn 0.28s ease; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── TIMELINE CARD ── */
+    .tl-card {
+      border: 1px solid var(--border); border-radius: 10px;
+      background: var(--card); overflow: hidden;
+      box-shadow: 0 1px 4px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .tl-item {
+      display: flex; gap: 16px; padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s, border-color 0.3s;
+    }
+    .tl-item:last-child { border-bottom: none; }
+    .tl-item:hover { background: var(--hover-bg); }
+    .tl-logo {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--bg); border: 1px solid var(--border);
+      flex-shrink: 0; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      font-weight: 500; color: var(--muted);
+      transition: border-color 0.3s;
+    }
+    .tl-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .tl-body { flex: 1; min-width: 0; }
+    .tl-company {
+      font-size: 14px; font-weight: 600; color: var(--text);
+      display: block; margin-bottom: 2px;
+    }
+    .tl-role { font-size: 13px; color: var(--muted); margin-bottom: 2px; }
+    .tl-period {
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--faint);
+    }
+    .tl-bullets {
+      list-style: disc; list-style-position: outside;
+      margin-left: 14px; margin-top: 8px;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .tl-bullets li { font-size: 12px; color: var(--text); line-height: 1.6; }
+
+    /* ── PROJECTS GRID ── */
+    .projects-grid {
+      display: grid; grid-template-columns: 1fr; gap: 14px;
+    }
+    @media (min-width: 560px) { .projects-grid { grid-template-columns: 1fr 1fr; } }
+
+    .project-card {
+      border: 1px solid var(--border); border-radius: 10px;
+      background: var(--card); overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: border-color 0.2s, background 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+    .project-card:hover { border-color: var(--muted); transform: translateY(-2px); }
+    .project-body { padding: 20px 20px 8px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .project-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .project-desc { font-size: 12px; color: var(--muted); line-height: 1.65; }
+    .project-footer { padding: 8px 20px 18px; display: flex; flex-direction: column; gap: 10px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag {
+      background: var(--secondary); color: var(--sec-fg);
+      border-radius: 4px; padding: 2px 7px;
+      font-size: 10px; font-weight: 600;
+      transition: background 0.3s, color 0.3s;
+    }
+    .proj-links { display: flex; flex-wrap: wrap; gap: 5px; }
+    .badge-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--primary); color: var(--primary-fg);
+      border-radius: 5px; padding: 3px 10px;
+      font-size: 11px; font-weight: 600;
+      transition: opacity 0.15s, background 0.3s, color 0.3s;
+    }
+    .badge-link:hover { opacity: 0.75; }
+    .badge-link svg { width: 11px; height: 11px; }
+
+    /* ── POSTS ── */
+    .posts-card {
+      border: 1px solid var(--border); border-radius: 10px;
+      background: var(--card); overflow: hidden;
+      box-shadow: 0 1px 4px var(--shadow);
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .post-item { border-bottom: 1px solid var(--border); transition: border-color 0.3s; }
+    .post-item:last-child { border-bottom: none; }
+    .post-link { display: block; }
+    .post-inner {
+      padding: 20px 24px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+      transition: background 0.12s;
+    }
+    .post-inner:hover { background: var(--hover-bg); }
+    .post-left { flex: 1; min-width: 0; }
+    .post-title {
+      font-size: 14px; font-weight: 600; color: var(--text);
+      margin-bottom: 4px; transition: color 0.15s; line-height: 1.4;
+    }
+    .post-link:hover .post-title { color: var(--muted); }
+    .post-excerpt { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+    .post-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .post-tag {
+      background: var(--secondary); color: var(--sec-fg);
+      border-radius: 4px; padding: 2px 7px;
+      font-size: 10px; font-weight: 500;
+      transition: background 0.3s, color 0.3s;
+    }
+    .post-date {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: var(--faint); white-space: nowrap; padding-top: 2px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 32px 0 60px; border-top: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .footer-inner {
+      max-width: 896px; margin: 0 auto; padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-copy { font-size: 12px; color: var(--faint); }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a { color: var(--muted); transition: color 0.15s; }
+    .footer-social a:hover { color: var(--text); }
+    .footer-social svg { width: 18px; height: 18px; }
+
+    @media (max-width: 480px) {
+      .page, .nav-inner { padding-left: 16px; padding-right: 16px; }
+      .hero-bio { padding-left: 0; }
+      .hero-social { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-inner">
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="blogs.html">Blogs</a></li>
+      </ul>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+      </button>
+  </div>
+</header>
+
+<div class="page">
+<main>
+<article>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-top">
+      <img src="img/profile_pic.jpg" alt="Anvit Mirjurkar" class="hero-avatar">
+      <div class="hero-name-row">
+        <h1 class="hero-name">Anvit Mirjurkar</h1>
+        <p class="hero-tagline">Security Engineer | University of Maryland</p>
+      </div>
+      <div class="hero-social">
+        <a href="mailto:anvitmirjurkar121@gmail.com" aria-label="Email" title="Email">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/anvit-mirjurkar/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a href="https://github.com/anvit121" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WORK & EDUCATION ── -->
+  <section id="work">
+    <div class="section-header">
+      <h2 class="section-title">Work &amp; Education</h2>
+    </div>
+    <div class="tabs-list" role="tablist">
+      <button class="tab-btn active" role="tab" id="btn-work" onclick="switchTab('work')">Work</button>
+      <button class="tab-btn" role="tab" id="btn-edu" onclick="switchTab('edu')">Education</button>
+    </div>
+
+    <div id="tab-work" class="tab-panel active">
+      <div class="tl-card">
+
+        <div class="tl-item">
+          <div class="tl-logo">
+            <img src="https://media.licdn.com/dms/image/v2/D560BAQG_ceAdlcg-HQ/company-logo_200_200/B56Zoc4wwXI4AI-/0/1761421234675/ameeba_inc_logo?e=2147483647&v=beta&t=miIs3SWGF5sKpZsDmkK3uzqbz5JZcOK8EWwLi8VtWsU" alt="Securis360" onerror="this.style.display='none';this.parentNode.textContent='S3'">
+          </div>
+          <div class="tl-body">
+            <span class="tl-company">Ameeba Labs LLC</span>
+            <p class="tl-role">Security Engineer </p>
+            <time class="tl-period">June 2025 – Present</time>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-logo">
+            <img src="https://umd-brand.transforms.svdcdn.com/production/uploads/images/informal-seal.png?w=512&h=512&auto=compress%2Cformat&fit=crop&dm=1656362660&s=f147c43be06ac2a530c41260819e63a1" alt="UMD" onerror="this.style.display='none';this.parentNode.textContent='UMD'">
+          </div>
+          <div class="tl-body">
+            <span class="tl-company">University of Maryland</span>
+            <p class="tl-role">Teaching & Grading Assistant</p>
+            <time class="tl-period">August 2024 – May 2025</time>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-logo">
+            <img src="https://i.tracxn.com/logo/company/final_logo-03_48b000c9-c456-4cbe-83b0-eb295b94307f.png" alt="Securis360" onerror="this.style.display='none';this.parentNode.textContent='S3'">
+          </div>
+          <div class="tl-body">
+            <span class="tl-company">Securis360</span>
+            <p class="tl-role">Security Analyst Intern</p>
+            <time class="tl-period">June 2024 – August 2024</time>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-logo">
+            <img src="https://umd-brand.transforms.svdcdn.com/production/uploads/images/informal-seal.png?w=512&h=512&auto=compress%2Cformat&fit=crop&dm=1656362660&s=f147c43be06ac2a530c41260819e63a1" alt="UMD" onerror="this.style.display='none';this.parentNode.textContent='UMD'">
+          </div>
+          <div class="tl-body">
+            <span class="tl-company">University of Maryland</span>
+            <p class="tl-role">Research Assistant</p>
+            <time class="tl-period">June 2024 – August 2024</time>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-logo">
+            <img src="https://media.licdn.com/dms/image/v2/C560BAQENpFuwhw-wVA/company-logo_200_200/company-logo_200_200/0/1630664935086/newagefireprotectionindustriespvtltd_logo?e=2147483647&v=beta&t=RA77ZpnzF9A0xFYoyDmReyLc28KBs8kmmWRSyaPtD2c" alt="AICTE" onerror="this.style.display='none';this.parentNode.textContent='AI'">
+          </div>
+          <div class="tl-body">
+            <span class="tl-company">Newage Fire Protection Industries</span>
+            <p class="tl-role">Software Security Engineer</p>
+            <time class="tl-period">Jan 2021 – May 2023</time>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="tab-edu" class="tab-panel">
+      <div class="tl-card">
+
+        <div class="tl-item">
+          <div class="tl-logo">
+            <img src="https://umd-brand.transforms.svdcdn.com/production/uploads/images/informal-seal.png?w=512&h=512&auto=compress%2Cformat&fit=crop&dm=1656362660&s=f147c43be06ac2a530c41260819e63a1" alt="UMD" onerror="this.style.display='none';this.parentNode.textContent='UMD'">
+          </div>
+          <div class="tl-body">
+            <span class="tl-company">University of Maryland College Park</span>
+            <p class="tl-role">M.Eng Cybersecurity</p>
+            <time class="tl-period">August 2023 – May 2025</time>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-logo">
+            <img src="data:image/jpeg;base64,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" alt="Mumbai" onerror="this.style.display='none';this.parentNode.textContent='MU'">
+          </div>
+          <div class="tl-body">
+            <span class="tl-company">University of Mumbai</span>
+            <p class="tl-role">B.Eng Information Technology</p>
+            <time class="tl-period">August 2019 – May 2023</time>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURED PROJECTS ── -->
+  <section id="projects">
+    <div class="section-header">
+      <h2 class="section-title">Featured Projects</h2>
+      <a class="view-more" href="projects.html">view more →</a>
+    </div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-name">AutoFix – AI-Powered AppSec Automation</div>
+          <p class="project-desc">AI-powered AppSec tool that ingests SAST/DAST results, deduplicates findings, and auto-generates secure code fixes with LLMs, opening GitHub PRs automatically.</p>
+        </div>
+        <div class="project-footer">
+          <div class="tag-row"><span class="tag">Python</span><span class="tag">FastAPI</span><span class="tag">Groq (Llama 3.3)</span><span class="tag">OWASP ZAP</span><span class="tag">GitHub API</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/anvit121/autofix-appsec-ai" class="badge-link" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+              Source
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-body">
+          <div class="project-name">CloudGuard – AWS Threat Detection Pipeline</div>
+          <p class="project-desc">Serverless AWS detection pipeline to identify privilege escalation, credential abuse, and data exfiltration using CloudTrail logs mapped to MITRE ATT&amp;CK.</p>
+        </div>
+        <div class="project-footer">
+          <div class="tag-row"><span class="tag">Python</span><span class="tag">AWS Lambda</span><span class="tag">CloudTrail</span><span class="tag">DynamoDB</span><span class="tag">MITRE ATT&amp;CK</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/anvit121/cloud-threat-detection-pipeline" class="badge-link" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+              Source
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── RECENT POSTS ── -->
+  <section id="blog">
+    <div class="section-header">
+      <h2 class="section-title">Recent Posts</h2>
+      <a class="view-more" href="blogs.html">view more →</a>
+    </div>
+    <div class="posts-card">
+      <div class="post-item">
+        <a href="blogs/rsa-cloudvillage-2025.html" class="post-link">
+          <div class="post-inner">
+            <div class="post-left">
+              <h3 class="post-title">CTF Writeup: RSA Cloud Village CTF 2025</h3>
+              <p class="post-excerpt">Cloud-focused challenges from RSA Conference 2025 — S3 misconfigs, IAM privilege escalation, and Lambda exploitation techniques.</p>
+              <div class="post-tags"><span class="post-tag">ctf</span><span class="post-tag">cloud</span><span class="post-tag">aws</span><span class="post-tag">writeup</span></div>
+            </div>
+            <span class="post-date">Apr 2025</span>
+          </div>
+        </a>
+      </div>
+      <div class="post-item">
+        <a href="blogs/tryhackme-hackfinity.html" class="post-link">
+          <div class="post-inner">
+            <div class="post-left">
+              <h3 class="post-title">CTF Writeup: TryHackMe Hackfinity Battle</h3>
+              <p class="post-excerpt">Full walkthrough of the TryHackMe Hackfinity CTF — recon, exploitation, lateral movement, and privilege escalation from start to flag.</p>
+              <div class="post-tags"><span class="post-tag">ctf</span><span class="post-tag">tryhackme</span><span class="post-tag">pentest</span><span class="post-tag">writeup</span></div>
+            </div>
+            <span class="post-date">2025</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+</article>
+</main>
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p class="footer-copy">© 2026 Anvit Mirjurkar</p>
+    <div class="footer-social">
+      <a href="https://github.com/anvit121" target="_blank" rel="noopener" title="GitHub">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/anvit-mirjurkar/" target="_blank" rel="noopener" title="LinkedIn">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Theme toggle — persisted, dark default
+  (function() {
+    const html = document.documentElement;
+    const btn = document.getElementById('themeToggle');
+    const saved = localStorage.getItem('anvit-theme') || 'dark';
+    html.setAttribute('data-theme', saved);
+    btn.addEventListener('click', function() {
+      const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('anvit-theme', next);
+    });
+  })();
+
+  // Tab switching with animation
+  function switchTab(id) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.remove('active');
+      p.style.display = 'none';
+    });
+    document.getElementById('btn-' + id).classList.add('active');
+    const panel = document.getElementById('tab-' + id);
+    panel.style.display = 'block';
+    // Trigger reflow for animation
+    void panel.offsetWidth;
+    panel.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

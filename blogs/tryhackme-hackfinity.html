@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CTF Writeup: TryHackMe Hackfinity Battle | Anvit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root, [data-theme="light"] {
+      --bg:#ffffff; --card:#EDECEA; --border:#D6D4CE;
+      --text:#000000; --muted:#6A6864; --faint:#9E9C98;
+      --primary:#1E1E1C; --primary-fg:#F5F4F0;
+      --secondary:#E2E0DB; --sec-fg:#3A3835;
+      --nav-bg:rgba(245,244,240,0.85); --code-bg:#F0EDEA;
+    }
+    [data-theme="dark"] {
+      --bg:#000000; --card:rgb(7,9,11); --border:#30363d;
+      --text:#ffffff; --muted:#8b949e; --faint:#484f58;
+      --primary:#e6edf3; --primary-fg:#0d1117;
+      --secondary:#21262d; --sec-fg:#c9d1d9;
+      --nav-bg:rgba(0,0,0,0.88); --code-bg:#0d1117;
+    }
+    html { scroll-behavior: smooth; }
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased; min-height:100vh; transition:background 0.3s,color 0.3s; }
+    a { color:inherit; text-decoration:none; }
+    header { position:sticky; top:0; z-index:50; background:var(--nav-bg); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--border); transition:background 0.3s,border-color 0.3s; }
+    .nav-inner { max-width:896px; margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .nav-links { display:flex; gap:24px; list-style:none; }
+    .nav-links a { font-size:14px; color:var(--muted); transition:color 0.15s; }
+    .nav-links a:hover { color:var(--text); }
+    .theme-toggle { width:32px; height:32px; border-radius:8px; background:var(--card); border:1px solid var(--border); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s; color:var(--muted); }
+    .theme-toggle:hover { background:var(--secondary); color:var(--text); }
+    .theme-toggle svg { width:15px; height:15px; }
+    .icon-sun{display:none;} .icon-moon{display:block;}
+    [data-theme="light"] .icon-sun{display:block;} [data-theme="light"] .icon-moon{display:none;}
+    .page { max-width:740px; margin:0 auto; padding:0 24px; }
+    main { padding-bottom:80px; }
+    .back-link { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); margin:32px 0 28px; transition:color 0.15s; }
+    .back-link:hover { color:var(--text); }
+    .back-link svg { width:14px; height:14px; }
+    .post-header { margin-bottom:36px; padding-bottom:28px; border-bottom:1px solid var(--border); }
+    .post-meta-top { display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+    .post-tag { background:var(--secondary); color:var(--sec-fg); border-radius:4px; padding:2px 8px; font-size:11px; font-weight:600; }
+    .post-tag.highlight { background:rgba(139,92,246,0.15); color:#a78bfa; }
+    .post-date { font-family:'DM Mono',monospace; font-size:12px; color:var(--faint); }
+    .post-sep { color:var(--faint); }
+    .post-title { font-size:clamp(22px,4vw,32px); font-weight:600; letter-spacing:-0.03em; line-height:1.25; color:var(--text); margin-bottom:10px; }
+    .post-subtitle { font-size:14px; color:var(--muted); line-height:1.65; }
+
+    /* TOC */
+    .toc { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-bottom:8px; }
+    .toc-label { font-size:10px; font-weight:600; font-family:'DM Mono',monospace; color:var(--faint); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:12px; }
+    .toc-group { margin-bottom:14px; }
+    .toc-group:last-child { margin-bottom:0; }
+    .toc-group-name { font-size:11px; font-weight:600; color:var(--muted); margin-bottom:6px; font-family:'DM Mono',monospace; }
+    .toc ol { padding-left:16px; display:flex; flex-direction:column; gap:4px; }
+    .toc li { font-size:13px; }
+    .toc a { color:var(--muted); transition:color 0.15s; }
+    .toc a:hover { color:var(--text); }
+
+    /* Category header */
+    .category-header { margin-top:52px; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+    .category-label { font-family:'DM Mono',monospace; font-size:11px; font-weight:500; color:var(--faint); text-transform:uppercase; letter-spacing:0.1em; }
+    .category-line { flex:1; height:1px; background:var(--border); }
+
+    /* Challenge */
+    .challenge { margin-top:32px; }
+    .ch-header { margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+    .ch-title { font-size:18px; font-weight:600; letter-spacing:-0.02em; color:var(--text); margin-bottom:8px; }
+    .ch-badges { display:flex; gap:5px; flex-wrap:wrap; }
+    .badge { font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:4px; border:1px solid var(--border); color:var(--muted); }
+    .content { display:flex; flex-direction:column; gap:14px; }
+    .content p { font-size:15px; color:var(--text); line-height:1.75; }
+    .content ul { padding-left:20px; display:flex; flex-direction:column; gap:5px; }
+    .content li { font-size:14px; color:var(--text); line-height:1.7; }
+    .content strong { font-weight:600; }
+    .content a { color:var(--muted); border-bottom:1px solid var(--border); transition:color 0.15s; word-break:break-all; }
+    .content a:hover { color:var(--text); }
+    .content pre { background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:14px 18px; overflow-x:auto; font-family:'DM Mono',monospace; font-size:12.5px; line-height:1.7; color:var(--text); }
+    .content code:not(pre code) { background:var(--code-bg); border:1px solid var(--border); border-radius:4px; padding:1px 6px; font-family:'DM Mono',monospace; font-size:12.5px; }
+    .callout { border-left:3px solid; padding:12px 16px; border-radius:0 6px 6px 0; margin-top:4px; }
+    .callout.flag { border-color:#22c55e; background:rgba(34,197,94,0.07); }
+    .callout.flag p { font-family:'DM Mono',monospace; font-size:13px !important; color:#22c55e !important; }
+    .callout.tip { border-color:#f59e0b; background:rgba(245,158,11,0.07); }
+    .callout.tip p { font-size:13px !important; }
+    .ch-divider { border:none; border-top:1px solid var(--border); margin-top:36px; }
+    footer { padding:32px 0 60px; border-top:1px solid var(--border); margin-top:64px; }
+    .footer-inner { max-width:896px; margin:0 auto; padding:0 24px; }
+    .footer-copy { font-size:12px; color:var(--faint); }
+    @media(max-width:480px) { .page,.nav-inner{padding-left:16px;padding-right:16px;} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="nav-inner">
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../projects.html">Projects</a></li>
+      <li><a href="../blogs.html">Blogs</a></li>
+    </ul>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="page"><main>
+  <a href="../blogs.html" class="back-link">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    back to blog
+  </a>
+
+  <div class="post-header">
+    <div class="post-meta-top">
+      <span class="post-tag highlight">tryhackme</span>
+      <span class="post-tag">cloud</span>
+      <span class="post-tag">osint</span>
+      <span class="post-tag">web</span>
+      <span class="post-tag">ctf</span>
+      <span class="post-sep">·</span>
+      <span class="post-date">Hackfinity Battle 2025</span>
+    </div>
+    <h1 class="post-title">CTF Writeup: TryHackMe Hackfinity Battle</h1>
+    <p class="post-subtitle">Seven challenges across Cloud, OSINT, and Web categories — covering AWS IAM enumeration, KMS decryption, S3 public exposure, Pigpen cipher, reverse image OSINT, and command injection.</p>
+  </div>
+
+  <div class="toc">
+    <p class="toc-label">Challenges</p>
+    <div class="toc-group">
+      <p class="toc-group-name">Cloud</p>
+      <ol>
+        <li><a href="#bucket-of-phish">A Bucket of Phish</a></li>
+        <li><a href="#cloud-sanity">Cloud Sanity Check</a></li>
+        <li><a href="#encrypted-data">Encrypted Data</a></li>
+      </ol>
+    </div>
+    <div class="toc-group">
+      <p class="toc-group-name">OSINT</p>
+      <ol>
+        <li><a href="#catchme1">Catch Me if You Can 1</a></li>
+        <li><a href="#catchme2">Catch Me if You Can 2</a></li>
+        <li><a href="#catchme3">Catch Me if You Can 3</a></li>
+      </ol>
+    </div>
+    <div class="toc-group">
+      <p class="toc-group-name">Web</p>
+      <ol>
+        <li><a href="#dark-encryptor">Dark Encryptor</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- CLOUD  -->
+  <div class="category-header">
+    <span class="category-label">Cloud</span>
+    <div class="category-line"></div>
+  </div>
+
+  <!-- Bucket of Phish -->
+  <div class="challenge" id="bucket-of-phish">
+    <div class="ch-header">
+      <h2 class="ch-title">A Bucket of Phish</h2>
+      <div class="ch-badges">
+        <span class="badge">S3 Public Access</span>
+        <span class="badge">AWS CLI</span>
+      </div>
+    </div>
+    <div class="content">
+      <p>The goal was to investigate a suspected phishing infrastructure hosted in S3. I started by attempting to list the bucket contents using anonymous access:</p>
+      <pre>aws s3 ls s3://darkinjector-phish/ --no-sign-request</pre>
+      <p>The <code>--no-sign-request</code> flag tests for public exposure without any credentials. The command returned two files:</p>
+      <pre>captured-logins-093582390  (132 bytes)
+index.html                 (2300 bytes)</pre>
+      <p>The <code>index.html</code> was likely the phishing page itself. The <code>captured-logins</code> file was the interesting one — I downloaded it:</p>
+      <pre>aws s3 cp s3://darkinjector-phish/captured-logins-093582390 .
+cat captured-logins-093582390</pre>
+      <p>The file contained victim credentials and the flag in a single line.</p>
+      <div class="callout flag"><p>🚩 THM{this_is_not_what_i_meant_by_public}</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> Always enable S3 Block Public Access at the account level. A publicly readable bucket containing a phishing credential dump is a double failure — misconfigured infra and exposed victim data.</p></div>
+    </div>
+  </div>
+
+  <hr class="ch-divider">
+
+  <!-- Cloud Sanity Check -->
+  <div class="challenge" id="cloud-sanity">
+    <div class="ch-header">
+      <h2 class="ch-title">Cloud Sanity Check</h2>
+      <div class="ch-badges">
+        <span class="badge">IAM Enumeration</span>
+        <span class="badge">Secrets Manager</span>
+        <span class="badge">Permission Discovery</span>
+      </div>
+    </div>
+    <div class="content">
+      <p>Given AWS credentials, the goal was to find what we could access and extract a flag. I started by configuring the CLI and confirming my identity:</p>
+      <pre>aws configure
+aws sts get-caller-identity</pre>
+      <p>This confirmed my user's ARN and account ID. Next I enumerated attached policies and available roles:</p>
+      <pre>aws iam list-attached-user-policies --user-name &lt;username&gt;
+aws iam list-roles</pre>
+      <p>The user had limited direct policies but could enumerate roles — a sign of possible privilege escalation paths. I then brute-forced permissions by trying safe read-only API calls across services:</p>
+      <pre>aws secretsmanager list-secrets
+aws iam get-user
+aws ec2 describe-instances
+aws iam list-roles</pre>
+      <p>Only <code>secretsmanager list-secrets</code> succeeded, revealing a secret named <code>secret-flag</code>. Classic enumeration: try as many read-only calls as possible and note which ones succeed. With the secret name known, I extracted it:</p>
+      <pre>aws secretsmanager get-secret-value --secret-id secret-flag</pre>
+      <p>The output JSON's <code>SecretString</code> field contained the flag.</p>
+      <div class="callout flag"><p>🚩 THM{for_your_eyes_only}</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> Least-privilege IAM policies matter. A user that can enumerate Secrets Manager but has no business need to is a misconfiguration waiting to become a breach. Tools like Prowler and Steampipe can surface these over-permissive configs at scale.</p></div>
+    </div>
+  </div>
+
+  <hr class="ch-divider">
+
+  <!-- Encrypted Data -->
+  <div class="challenge" id="encrypted-data">
+    <div class="ch-header">
+      <h2 class="ch-title">Encrypted Data</h2>
+      <div class="ch-badges">
+        <span class="badge">IAM Role Assumption</span>
+        <span class="badge">KMS Decrypt</span>
+        <span class="badge">STS</span>
+      </div>
+    </div>
+    <div class="content">
+      <p>Given credentials with limited permissions, I needed to find and decrypt an encrypted file stored in S3. I configured the CLI and listed the bucket:</p>
+      <pre>aws configure
+aws s3 ls s3://secret-messages/
+aws s3 cp s3://secret-messages/20250301.msg.enc ./20250301.msg.enc</pre>
+      <p>I confirmed the file type:</p>
+      <pre>file 20250301.msg.enc
+hexdump -C -n 20 20250301.msg.enc
+cat 20250301.msg.enc</pre>
+      <p>It was a binary ciphertext blob — KMS-encrypted. To decrypt it I'd need elevated permissions. I listed IAM roles to find one with crypto privileges:</p>
+      <pre>aws iam list-roles</pre>
+      <p>One role stood out immediately: <code>crypto-master</code>. I assumed it using STS:</p>
+      <pre>aws sts assume-role \
+  --role-arn arn:aws:iam::332173347248:role/crypto-master \
+  --role-session-name decrypt-session</pre>
+      <p>This returned temporary credentials. I exported them:</p>
+      <pre>export AWS_ACCESS_KEY_ID=...
+export AWS_SECRET_ACCESS_KEY=...
+export AWS_SESSION_TOKEN=...</pre>
+      <p>I then identified the KMS key and confirmed it was active:</p>
+      <pre>aws kms describe-key --key-id &lt;key-id&gt;</pre>
+      <p>The key was enabled. I parsed the ciphertext to isolate the raw binary blob, then decrypted it:</p>
+      <pre>aws kms decrypt \
+  --ciphertext-blob fileb://encrypted_blob \
+  --output text \
+  --query Plaintext | base64 --decode > dec_message.txt</pre>
+      <p>The decrypted plaintext contained the flag.</p>
+      <div class="callout flag"><p>🚩 THM{crypto_cloud_conundrum}</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> <code>sts:AssumeRole</code> without a proper trust boundary condition is a classic privilege escalation path. Always scope role trust policies to specific principals and add conditions like MFA or source IP. Also — never store KMS-encrypted blobs alongside the role ARN that can decrypt them.</p></div>
+    </div>
+  </div>
+
+  <!--  OSINT  -->
+  <div class="category-header" style="margin-top:56px;">
+    <span class="category-label">OSINT</span>
+    <div class="category-line"></div>
+  </div>
+
+  <!-- Catch Me 1 -->
+  <div class="challenge" id="catchme1">
+    <div class="ch-header">
+      <h2 class="ch-title">Catch Me if You Can 1</h2>
+      <div class="ch-badges">
+        <span class="badge">Reverse Image Search</span>
+        <span class="badge">Geolocation</span>
+      </div>
+    </div>
+    <div class="content">
+      <p>The challenge provided an image. I uploaded it to Google Images for a reverse image search and found the mural it depicted along with its location.</p>
+      <div class="callout flag"><p>🚩 THM{coringa_do_beco}</p></div>
+    </div>
+  </div>
+
+  <hr class="ch-divider">
+
+  <!-- Catch Me 2 -->
+  <div class="challenge" id="catchme2">
+    <div class="ch-header">
+      <h2 class="ch-title">Catch Me if You Can 2</h2>
+      <div class="ch-badges">
+        <span class="badge">Cipher Identification</span>
+        <span class="badge">Pigpen Cipher</span>
+      </div>
+    </div>
+    <div class="content">
+      <p>The challenge provided an image containing unusual symbols. I uploaded it to Google Images and identified the symbols as <strong>Pigpen cipher</strong> — a geometric substitution cipher that maps letters to grid positions.</p>
+      <p>After decoding the symbols using a Pigpen cipher key, the plaintext read:</p>
+      <pre>meet at torii portal</pre>
+      <div class="callout flag"><p>🚩 THM{torii_portal}</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> When you encounter unfamiliar symbols in a CTF, a reverse image search of a snippet is often faster than trying to identify the cipher manually. Google Images recognized the Pigpen pattern immediately.</p></div>
+    </div>
+  </div>
+
+  <hr class="ch-divider">
+
+  <!-- Catch Me 3 -->
+  <div class="challenge" id="catchme3">
+    <div class="ch-header">
+      <h2 class="ch-title">Catch Me if You Can 3</h2>
+      <div class="ch-badges">
+        <span class="badge">OSINT</span>
+        <span class="badge">TripAdvisor</span>
+        <span class="badge">Chained Challenges</span>
+      </div>
+    </div>
+    <div class="content">
+      <p>The challenge asked about a location associated with "Mr. Wok." Direct searches for <code>mr.wok</code> and <code>mr.wok safe house</code> returned nothing useful. I noticed the previous challenges had a Brazilian theme (Coringa do Beco, Torii Portal in São Paulo) — so I tried a more specific search:</p>
+      <pre>mr.wok safe house sao paulo</pre>
+      <p>This surfaced a TripAdvisor listing at the URL:</p>
+      <pre>https://www.tripadvisor.ie/Restaurant_Review-g303631-d14802491-Reviews-Mr_Wok-Sao_Paulo_State_of_Sao_Paulo.html</pre>
+      <p>The listing showed the address: <strong>Rua Galvao Bueno 83, Sao Paulo</strong>. I submitted the street number as the flag format and it was accepted.</p>
+      <div class="callout flag"><p>🚩 THM{83_galvao_bueno}</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> In multi-part OSINT challenges, the clues are often geographically or thematically linked. When a direct search fails, add context from previous challenges — here the São Paulo connection from challenges 1 and 2 was the key.</p></div>
+    </div>
+  </div>
+
+  <!--  WEB  -->
+  <div class="category-header" style="margin-top:56px;">
+    <span class="category-label">Web</span>
+    <div class="category-line"></div>
+  </div>
+
+  <!-- Dark Encryptor -->
+  <div class="challenge" id="dark-encryptor">
+    <div class="ch-header">
+      <h2 class="ch-title">Dark Encryptor</h2>
+      <div class="ch-badges">
+        <span class="badge">Command Injection</span>
+        <span class="badge">PGP</span>
+      </div>
+    </div>
+    <div class="content">
+      <p>The challenge presented a web app with what appeared to be an encryption interface. I suspected command injection and started probing with simple payloads to check if OS commands were being executed.</p>
+      <p>First, I tested for command injection using a semicolon separator:</p>
+      <pre>; ls -la</pre>
+      <p>This worked — the server returned a directory listing, and I could see <code>flag.txt</code> in the output. Now to read it. I tried with <code>&&</code> first:</p>
+      <pre>&amp;&amp; cat flag.txt</pre>
+      <p>That didn't work — the <code>&&</code> operator was likely being filtered or the preceding command was failing. I switched back to the semicolon:</p>
+      <pre>; cat flag.txt</pre>
+      <p>This worked and printed the flag directly.</p>
+      <div class="callout flag"><p>🚩 THM{pgp_cant_stop_me}</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> When <code>&&</code> is blocked or fails, <code>;</code> is often a viable alternative since it runs the second command regardless of the first command's exit code. Always test multiple injection delimiters — <code>;</code>, <code>|</code>, <code>&&</code>, <code>||</code>, newlines — as filters are rarely complete.</p></div>
+    </div>
+  </div>
+
+</main></div>
+
+<footer><div class="footer-inner">
+  <p class="footer-copy">© 2025 Anvit Mirjurkar</p>
+</div></footer>
+
+<script>
+(function(){const h=document.documentElement,b=document.getElementById('themeToggle'),s=localStorage.getItem('anvit-theme')||'dark';h.setAttribute('data-theme',s);b.addEventListener('click',function(){const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('anvit-theme',n);});})();
+</script>
+</body>
+</html>

